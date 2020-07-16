@@ -1,9 +1,6 @@
 # KeySentryJS
 
-<style>
-blockquote.warning { background-color: yellow; color: red; font-weight: 700 }
-</style>
-<blockquote class="warning">
+<blockquote style="background-color: yellow; color: red; font-weight: 700">
 WARNING: This library is not yet feature complete, in fact it as of yet does not even work. A proof of concept has already been tested and it will work once fully implemented however right now the code needs to be written. The documentation for what the library will do is subject to change and feedback/feature requests are welcome.
 </blockquote>
 
