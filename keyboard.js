@@ -123,6 +123,15 @@ class Sequence {
 		this.eventName = eventName;
 		this.index = 0;
 		this.event = new Event(eventName);
+		this.isLogging = false;
+	}
+
+	enableLogging() {
+		this.isLogging = true;
+	}
+
+	disableLogging() {
+		this.isLogging = false;
 	}
 
 	processKeyboardEvent(event) {
@@ -154,10 +163,10 @@ class Keyboard {
 	}
 
 	onSequence(sequence, predicate) {
-
+		
 	}
 
-	registerKey(keyDesc, eventName) {
+	registerKey(keyDesc, eventName, element = document) {
 
 	}
 
@@ -168,7 +177,7 @@ class Keyboard {
 	static describe(event) {
 		var keyCode = event.key.toUpperCase();
 		if (['CONTROL', 'ALT', 'META', 'SHIFT'].includes(keyCode)) {
-			return '';
+			return keyCode;
 		}
 		var str = (event.ctrlKey ? 'Ctrl+' : '') +
 			(event.altKey ? 'Alt+' : '') +
@@ -180,14 +189,11 @@ class Keyboard {
 
 	static parseShortcut(shortcut) {
 		var event = KeyboardEvent('keydown');
-		
-		var space = shortcut.indexOf(' ');
-		var plus = shortcut.indexOf('+');
-		var dash = shortcut.indexOf('-');
-		
-		var hasSpaces = (space != -1);
-		var hasPluses = (space != -1);
-		var hasDashes = (space != -1);
+		event.ctrlKey = false;
+		event.altKey = false;
+		event.shiftKey = false;
+		event.metaKey = false;
+		event.key = '';
 		
 		var safeShortcut = shortcut;
 
