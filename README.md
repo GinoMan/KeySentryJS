@@ -156,6 +156,14 @@ Description: Create and install an event handler for a specified key or key comb
 ------------------
 
 ```javascript
+Keyboard.stringifyArray(arr: array[any])
+```
+
+*static*
+
+------------------
+
+```javascript
 Keyboard.describe(event: KeyboardEvent) -> str
 ```
 
@@ -185,6 +193,17 @@ Note: "Manually firing these events do _not_ generate the default action associa
 
 ------------------
 
+```javascript
+Keyboard.compKeyEvents(
+	event1: KeyboardEvent,
+	event2: KeyboardEvent
+)
+```
+
+*static*
+
+------------------
+
 ### Sequence ###
 
 ```javascript
@@ -198,19 +217,52 @@ constructor(
 ------------------
 
 ```javascript
-enableLogging()
+obj.enableLogging()
 ```
 
 ------------------
 
 ```javascript
-disableLogging()
+obj.disableLogging()
 ```
 
 ------------------
 
 ```javascript
-processKeyboardEvent(
+obj.processKeyboardEvent(
+  event: KeyboardEvent
+)
+```
+
+------------------
+
+### KeyboardInput ###
+
+```javascript
+constructor(
+  keyDesc: str,
+  eventName: str,
+  element: DOMElement,
+  logging: bool
+)
+```
+
+------------------
+
+```javascript
+obj.enableLogging()
+```
+
+------------------
+
+```javascript
+obj.disableLogging()
+```
+
+------------------
+
+```javascript
+obj.processKeyboardEvent(
   event: KeyboardEvent
 )
 ```
@@ -219,29 +271,45 @@ processKeyboardEvent(
 
 ## Constants ##
 
-| Constant Name | String Value  | |  Constant Name | String Value    | | Constant Name | String Value   |
-|--------------:|---------------|-|---------------:|-----------------|-|--------------:|----------------|
-|        `A` =  | `'A'`         | |         `B` =  | `'B'`           | |        `C` =  | `'C'`          |
-|        `D` =  | `'D'`         | |         `E` =  | `'E'`           | |        `F` =  | `'F'`          |
-|        `G` =  | `'G'`         | |         `H` =  | `'H'`           | |        `I` =  | `'I'`          |
-|        `J` =  | `'J'`         | |         `K` =  | `'K'`           | |        `L` =  | `'L'`          |
-|        `M` =  | `'M'`         | |         `N` =  | `'N'`           | |        `O` =  | `'O'`          |
-|        `P` =  | `'P'`         | |         `Q` =  | `'Q'`           | |        `R` =  | `'R'`          |
-|        `S` =  | `'S'`         | |         `T` =  | `'T'`           | |        `U` =  | `'U'`          |
-|        `V` =  | `'V'`         | |         `W` =  | `'W'`           | |        `X` =  | `'X'`          |
-|        `Y` =  | `'Y'`         | |         `Z` =  | `'Z'`           | |       `UP` =  | `'ARROWUP'`    |
-|     `DOWN` =  | `'ARROWDOWN'` | |      `LEFT` =  | `'ARROWLEFT'`   | |    `RIGHT` =  | `'ARROWRIGHT'` |
-|    `START` =  | `'ENTER'`     | |     `ENTER` =  | `'ENTER'`       | |   `SELECT` =  | `' '`          |
-|    `SPACE` =  | `' '`         | |        `F1` =  | `'F1'`          | |       `F2` =  | `'F2'`         |
-|       `F3` =  | `'F3'`        | |        `F4` =  | `'F4'`          | |       `F5` =  | `'F5'`         |
-|       `F6` =  | `'F6'`        | |        `F7` =  | `'F7'`          | |       `F8` =  | `'F8'`         |
-|       `F9` =  | `'F9'`        | |       `F10` =  | `'F10'`         | |      `F11` =  | `'F11'`        |
-|      `F12` =  | `'F12'`       | |      `CTRL` =  | `'CONTROL'`     | |      `ALT` =  | `'ALT'`        |
-|     `META` =  | `'META'`      | |     `SHIFT` =  | `'SHIFT'`       | |      `ESC` =  | `'ESCAPE'`     |
-|      `TAB` =  | `'TAB'`       | |      `HOME` =  | `'HOME'`        | |   `PGDOWN` =  | `'PAGEDOWN'`   |
-|     `PGUP` =  | `'PAGEUP'`    | | `BACKSPACE` =  | `'BACKSPACE'`   | |   `INSERT` =  | `'INSERT'`     |
-|   `DELETE` =  | `'DELETE'`    | |      `MENU` =  | `'CONTEXTMENU'` | |     `PLUS` =  | `'+'`          |
-|               |               | |     `DASH` =  | `'-'`            | |               |                |
+|    Constant Name | String Value  | |    Constant Name | String Value    | |    Constant Name | String Value   |
+|-----------------:|---------------|-|-----------------:|-----------------|-|-----------------:|----------------|
+|           `A` =  | `'A'`         | |           `B` =  | `'B'`           | |           `C` =  | `'C'`          |
+|           `D` =  | `'D'`         | |           `E` =  | `'E'`           | |           `F` =  | `'F'`          |
+|           `G` =  | `'G'`         | |           `H` =  | `'H'`           | |           `I` =  | `'I'`          |
+|           `J` =  | `'J'`         | |           `K` =  | `'K'`           | |           `L` =  | `'L'`          |
+|           `M` =  | `'M'`         | |           `N` =  | `'N'`           | |           `O` =  | `'O'`          |
+|           `P` =  | `'P'`         | |           `Q` =  | `'Q'`           | |           `R` =  | `'R'`          |
+|           `S` =  | `'S'`         | |           `T` =  | `'T'`           | |           `U` =  | `'U'`          |
+|           `V` =  | `'V'`         | |           `W` =  | `'W'`           | |           `X` =  | `'X'`          |
+|           `Y` =  | `'Y'`         | |           `Z` =  | `'Z'`           | |          `UP` =  | `'ARROWUP'`    |
+|        `DOWN` =  | `'ARROWDOWN'` | |        `LEFT` =  | `'ARROWLEFT'`   | |       `RIGHT` =  | `'ARROWRIGHT'` |
+|       `START` =  | `'ENTER'`     | |       `ENTER` =  | `'ENTER'`       | |      `SELECT` =  | `' '`          |
+|       `SPACE` =  | `' '`         | |          `F1` =  | `'F1'`          | |          `F2` =  | `'F2'`         |
+|          `F3` =  | `'F3'`        | |          `F4` =  | `'F4'`          | |          `F5` =  | `'F5'`         |
+|          `F6` =  | `'F6'`        | |          `F7` =  | `'F7'`          | |          `F8` =  | `'F8'`         |
+|          `F9` =  | `'F9'`        | |         `F10` =  | `'F10'`         | |         `F11` =  | `'F11'`        |
+|         `F12` =  | `'F12'`       | |        `CTRL` =  | `'CONTROL'`     | |         `ALT` =  | `'ALT'`        |
+|        `META` =  | `'META'`      | |       `SHIFT` =  | `'SHIFT'`       | |         `ESC` =  | `'ESCAPE'`     |
+|         `TAB` =  | `'TAB'`       | |        `HOME` =  | `'HOME'`        | |      `PGDOWN` =  | `'PAGEDOWN'`   |
+|        `PGUP` =  | `'PAGEUP'`    | |   `BACKSPACE` =  | `'BACKSPACE'`   | |      `INSERT` =  | `'INSERT'`     |
+|      `DELETE` =  | `'DELETE'`    | |        `MENU` =  | `'CONTEXTMENU'` | |        `PLUS` =  | `'+'`          |
+|        `DASH` =  | `'-'`         | |       `TILDE` =  | `'~'`           | |    `BACKTICK` =  | ``'`'``        |
+|        `BANG` =  | `'!'`         | |          `AT` =  | `'@'`           | |    `ASPERAND` =  | `'@'`          |
+|       `CARET` =  | `'^'`         | |       `POUND` =  | `'#'`           | |        `HASH` =  | `'#'`          |
+|  `UNDERSCORE` =  | `'_'`         | |      `DOLLAR` =  | `'$'`           | |       `SIGIL` =  | `'$'`          |
+|   `EQUALSIGN` =  | `'='`         | |     `PERCENT` =  | `'%'`           | |      `MODULO` =  | `'%'`          |
+|        `PIPE` =  | `'\|'`        | |         `AND` =  | `'&'`           | |   `AMPERSAND` =  | `'&'`          |
+|   `SEMICOLON` =  | `';'`         | |    `ASTERISK` =  | `'*'`           | |        `STAR` =  | `'*'`          |
+|       `COLON` =  | `':'`         | |      `LPAREN` =  | `'('`           | |      `RPAREN` =  | `')'`          |
+|       `COMMA` =  | `','`         | | `LCURLYBRACE` =  | `'{'`           | | `RCURLYBRACE` =  | `'}'`          |
+|    `QUESTION` =  | `'?'`         | |    `LBRACKET` =  | `'['`           | |    `RBRACKET` =  | `']'`          |
+| `DOUBLEQUOTE` =  | `'"'`         | |    `LESSTHAN` =  | `'<'`           | | `GREATERTHAN` =  | `'>'`          |
+|       `QUOTE` =  | `"'"`         | |      `LANGLE` =  | `'<'`           | |      `RANGLE` =  | `'>'`          |
+|      `PERIOD` =  | `'.'`         | |         `DOT` =  | `'.'`           | |        `ZERO` =  | `'0'`          |
+|         `ONE` =  | `'1'`         | |         `TWO` =  | `'2'`           | |       `THREE` =  | `'3'`          |
+|        `FOUR` =  | `'4'`         | |        `FIVE` =  | `'5'`           | |         `SIX` =  | `'6'`          |
+|       `SEVEN` =  | `'7'`         | |       `EIGHT` =  | `'8'`           | |        `NINE` =  | `'9'`          |
+|   `BACKSLASH` =  | `'\'`         | |       `SLASH` =  | `'/'`           | |                  |                |
 
 The constants above are used for the "sequences" to make them look more natural. Individual digits can be put in place and the `Sequence` Constructor will automatically transform them into the proper string values.
 

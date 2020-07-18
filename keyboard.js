@@ -105,6 +105,55 @@ const DELETE = 'DELETE';
 const MENU = 'CONTEXTMENU';
 const PLUS = '+';
 const DASH = '-';
+const TILDE = '~';
+const BACKTICK = '`';
+const BANG = '!';
+const AT = '@';
+const ASPERAND = '@';
+const CARET = '^';
+const POUND = '#';
+const HASH = '#';
+const UNDERSCORE = '_';
+const DOLLAR = '$';
+const SIGIL = '$';
+const EQUALSIGN = '=';
+const PERCENT = '%';
+const MODULO = '%';
+const PIPE = '|';
+const AND = '&';
+const AMPERSAND = '&';
+const SEMICOLON = ';';
+const ASTERISK = '*';
+const STAR = '*';
+const COLON = ':';
+const LPAREN = '(';
+const RPAREN = ')';
+const COMMA = ',';
+const LCURLYBRACE = '{';
+const RCURLYBRACE = '}';
+const QUESTION = '?';
+const LBRACKET = '[';
+const RBRACKET = ']';
+const DOUBLEQUOTE = '"';
+const LESSTHAN = '<';
+const GREATERTHAN = '>';
+const QUOTE = '\'';
+const LANGLE = '<';
+const RANGLE = '>';
+const PERIOD = '.';
+const DOT = '.';
+const ZERO = '0';
+const ONE = '1';
+const TWO = '2';
+const THREE = '3';
+const FOUR = '4';
+const FIVE = '5';
+const SIX = '6';
+const SEVEN = '7';
+const EIGHT = '8';
+const NINE = '9';
+const BACKSLASH = '\\';
+const SLASH = '/';
 
 class KeyboardInput {
 	constructor(keyDesc, eventName, element = document, logging = false) {
@@ -126,6 +175,14 @@ class KeyboardInput {
 		else {
 			this.element = [ element ];
 		}
+	}
+
+	enableLogging() {
+		this.logging = true;
+	}
+
+	disableLogging() {
+		this.logging = false;
 	}
 
 	processKeyboardEvent(event) {
@@ -152,7 +209,7 @@ class Sequence {
 			this.element = [ element ];
 		}
 
-		this.sequence = sequence;
+		this.sequence = Keyboard.stringifyArray(sequence);
 		this.eventName = eventName;
 		this.index = 0;
 		this.event = new Event(eventName);
@@ -244,6 +301,12 @@ class Keyboard {
 
 	}
 
+	static stringifyArray(arr) {
+		arr.forEach(function (item, index, array) {
+			array[index] = item.toString();
+		});
+	}
+
 	static describe(event) {
 		var keyCode = event.key.toUpperCase();
 		if (['CONTROL', 'ALT', 'META', 'SHIFT'].includes(keyCode)) {
@@ -285,10 +348,12 @@ class Keyboard {
 		const meta = ['META', 'CMD', 'COMMAND', 'WIN', 'WINDOWS'];
 
 		keys.forEach(function (item, index, arr) {
+			// undoes the above parsing
 			arr[index] = item.replace('PLUS', '+');
 			arr[index] = item.replace('DASH', '-');
 			arr[index] = item.replace('SPACE', ' ');
-			
+
+			// parses shortcut into keyboard event
 			if (control.includes(item.toUpperCase())) {
 				dict.ctrlKey = true;
 			}
@@ -308,5 +373,15 @@ class Keyboard {
 		
 		var event = KeyboardEvent('keydown', dict);
 		return event;
+	}
+
+	static compKeyEvents(event1, event2) {
+		return (
+			event1.key == event2.key &&
+			event1.ctrlKey == event2.ctrlKey &&
+			event1.shiftKey == event2.shiftKey &&
+			event1.altKey == event2.altKey &&
+			event1.metaKey == event2.metaKey
+		);
 	}
 }
