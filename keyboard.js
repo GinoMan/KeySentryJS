@@ -106,9 +106,42 @@ const MENU = 'CONTEXTMENU';
 const PLUS = '+';
 const DASH = '-';
 
+class KeyboardInput {
+	constructor(keyDesc, eventName, element = document, logging = false) {
+		this.keyboardEvent = Keyboard.parseShortcut(keyDesc);
+		this.key = this.keyboardEvent.key;
+		this.shiftKey = this.keyboardEvent.shiftKey;
+		this.ctrlKey = this.keyboardEvent.ctrlKey;
+		this.altKey = this.keyboardEvent.ctrlKey;
+		this.metaKey = this.keyboardEvent.metaKey;
+		this.eventName = eventName;
+		this.logging = logging;
+
+		if (element.jquery) {
+			this.element = element.get(); // get dom element if a jquery element is passed.
+		}
+		else if (typeof(element) == typeof([])) {
+			this.element = element;
+		}
+		else {
+			this.element = [ element ];
+		}
+	}
+
+	processKeyboardEvent(event) {
+		if (event.key == this.key &&
+			event.shiftKey == this.shiftKey &&
+			event.ctrlKey == this.ctrlKey &&
+			event.altKey == this.altKey &&
+			event.metaKey == this.metaKey)
+		{
+			this.element.dispatchEvent(new Event(this.eventName));
+		}
+	}
+}
 
 class Sequence {
-	constructor(sequence, eventName, element = document) {
+	constructor(sequence, eventName, element = document, logging = false) {
 		if (element.jquery) {
 			this.element = element.get(); // get dom element if a jquery element is passed.
 		}
@@ -123,7 +156,10 @@ class Sequence {
 		this.eventName = eventName;
 		this.index = 0;
 		this.event = new Event(eventName);
-		this.isLogging = false;
+		this.isLogging = logging;
+		if (this.isLogging) {
+			console.log('Sequence ' + this.sequence.toString() + ' initialized for event ' + this.eventName + '.');
+		}
 	}
 
 	enableLogging() {
@@ -153,9 +189,43 @@ class Sequence {
 class Keyboard {
 	constructor(options = {}) {
 		this.events = [];
-		
-		// override the keyboard handler with our custom handler
+		this.sequences = [];
+		this.logging = ("logging" in options ? options.logging : false);
+		this.disableTAF = ("disableTAF" in options ? options.disableTAF : true);
+		this.disableSC = ("disableSC" in options ? options.disableSC : false);
+		this.disableRefresh = ("disableRefresh" in options ? options.disableRefresh : false);
 
+		// override the keyboard handler with our custom handler
+		window.onkeydown = event => {
+			// Custom handler here that responds to changes to the object.
+			var events = this.events;
+			var sequences = this.sequences;
+			var logging = this.logging;
+			var disableTAF = this.disableTAF;
+			var disableSC = this.disableSC;
+			var disableRefresh = this.disableRefresh;
+
+			if (!disableRefresh && event.key.toUpperCase() == 'R' && event.ctrlKey) {
+				location.refresh(event.shiftKey);
+				return true;
+			}
+			else if (!disableSC && (event.ctrlKey || event.altKey || event.metaKey)) {
+				return true;
+			}
+			else if (!disableTAF) {
+				return true;
+			}
+			else {
+				// check key against event handlers and dispatch event if necessary
+				events.forEach(function (item) {
+					item.processKeyboardEvent(event);
+				});
+				// send the key to all sequences
+				sequences.forEach(function (item) {
+					item.processKeyboardEvent(event);
+				});
+			}
+		};
 	}
 
 	registerSequence(sequence, eventName, element = document) {
@@ -163,7 +233,7 @@ class Keyboard {
 	}
 
 	onSequence(sequence, predicate) {
-		
+
 	}
 
 	registerKey(keyDesc, eventName, element = document) {
@@ -188,27 +258,27 @@ class Keyboard {
 	}
 
 	static parseShortcut(shortcut) {
-		var event = KeyboardEvent('keydown');
-		event.ctrlKey = false;
-		event.altKey = false;
-		event.shiftKey = false;
-		event.metaKey = false;
-		event.key = '';
+		var dict = {};
+		dict.ctrlKey = false;
+		dict.altKey = false;
+		dict.shiftKey = false;
+		dict.metaKey = false;
+		dict.key = '';
 		
 		var safeShortcut = shortcut;
-
+		
 		safeShortcut = safeShortcut.replace('- ', '-SPACE');
 		safeShortcut = safeShortcut.replace('+ ', '+SPACE');
 		safeShortcut = safeShortcut.replace('+-', '+DASH');
 		safeShortcut = safeShortcut.replace('-+', '-PLUS');
 		safeShortcut = safeShortcut.replace('--', '-DASH');
 		safeShortcut = safeShortcut.replace('++', '+PLUS');
-
+		
 		safeShortcut = safeShortcut.replace('-', '+');
 		safeShortcut = safeShortcut.replace(' ', '+');
-
+		
 		var keys = safeShortcut.split('+');
-
+		
 		const control = ['CONTROL', 'CTRL', 'CON'];
 		const alt = ['ALT', 'ALTGR', 'ALTERNATE', 'LALT', 'LEFTALT'];
 		const shift = ['SHIFT', 'SH'];
@@ -218,24 +288,25 @@ class Keyboard {
 			arr[index] = item.replace('PLUS', '+');
 			arr[index] = item.replace('DASH', '-');
 			arr[index] = item.replace('SPACE', ' ');
-
+			
 			if (control.includes(item.toUpperCase())) {
-				event.ctrlKey = true;
+				dict.ctrlKey = true;
 			}
 			else if (alt.includes(item.toUpperCase())) {
-				event.altKey = true;
+				dict.altKey = true;
 			}
 			else if (shift.includes(item.toUpperCase())) {
-				event.shiftKey = true;
+				dict.shiftKey = true;
 			}
 			else if (meta.includes(item.toUpperCase())) {
-				event.metaKey = true;
+				dict.metaKey = true;
 			}
 			else {
-				event.key = item.toUpperCase();
+				dict.key = item.toUpperCase();
 			}
 		});
-
+		
+		var event = KeyboardEvent('keydown', dict);
 		return event;
 	}
 }
