@@ -1,4 +1,4 @@
-# KeySentryJS
+# KeySentryJS #
 
 <blockquote style="background-color: yellow; color: red;">
 
@@ -6,9 +6,9 @@
 
 </blockquote>
 
-Allows you to capture and respond to keyboard presses and sequences without browser features stealing them. If you've tried to set up keyboard based Easter Eggs on websites before (like the Konami Code), you're probably aware that most browsers have features like "TypeAheadFind" or "QuickFind" that intercepts your keyboard shortcuts and prevents your web application from receiving them. 
+Allows you to capture and respond to keyboard presses and sequences without browser features stealing them. If you've tried to set up keyboard based Easter Eggs on websites before (like the Konami Code), you're probably aware that most browsers have features like "TypeAheadFind" or "QuickFind" that intercepts your keyboard shortcuts and prevents your web application from receiving them.
 
-KeySentryJS is the answer. It allows you to block some or even all of the keyboard events that the browser attempts to intercept so that your page can intercept them. You can even define your own shortcuts and sequences and assign them custom events that your web app can respond to. 
+KeySentryJS is the answer. It allows you to block some or even all of the keyboard events that the browser attempts to intercept so that your page can intercept them. You can even define your own shortcuts and sequences and assign them custom events that your web app can respond to.
 
 It also allows you to somewhat selectively intercept and pass through different kinds of combinations. Check out the features and examples below:
 
@@ -57,7 +57,7 @@ kb.onKey('Ctrl+Alt+S', function() {
 constructor( options: dict )
 ```
 
-Description: Initializes a Keyboard object and installs the event filter. By default, it will disable TypeAheadFind, but leave keyboard shortcuts and refresh enabled. 
+Description: Initializes a Keyboard object and installs the event filter. By default, it will disable TypeAheadFind, but leave keyboard shortcuts and refresh enabled.
 
 Options:
 
@@ -89,13 +89,13 @@ Description: Disables logging of all events from the library.
 
 ```javascript
 obj.registerSequence(
-  sequence: array[str], 
-  eventName: str, 
+  sequence: array[str],
+  eventName: str,
   element: DOMObject = document
 )
 ```
 
-Description: Registers a new sequence to spawn an event whenever the sequence is performed. The element is the element that will be sent the event when the sequence is detected. 
+Description: Registers a new sequence to spawn an event whenever the sequence is performed. The element is the element that will be sent the event when the sequence is detected.
 
 Parameters:
 
@@ -103,7 +103,7 @@ Parameters:
 
 `eventName`: A string name for the event. I recommend a lowercase named event prefixed with a unique name followed by a dot. E.g. `'easter.egg'`.
 
-`element`: Default: `document`. The element that should receive the event triggered by this character sequence. If you want the event to fire globally, you can leave this value as its default. 
+`element`: Default: `document`. The element that should receive the event triggered by this character sequence. If you want the event to fire globally, you can leave this value as its default.
 
 ------------------
 
@@ -114,7 +114,7 @@ obj.onSequence(
 )
 ```
 
-Description: Create and install an event handler for a specified sequence. Basically, when a user types in that sequence, the predicate will be triggered. 
+Description: Create and install an event handler for a specified sequence. Basically, when a user types in that sequence, the predicate will be triggered.
 
 `sequence`: A list of `key`'s from the built-in `KeyboardEvent` class. Constants exist which allow one to use more intuitive names for the keys for this array.
 
@@ -136,7 +136,7 @@ Description: Sets a Key or Key combination to trigger a certain event.
 
 `eventName`: This is the name of the event that will be fired if the key is pressed.
 
-`element`: Default: `document`. The element that should receive the event triggered by this character sequence. If you want the event to fire globally, you can leave this value as its default. 
+`element`: Default: `document`. The element that should receive the event triggered by this character sequence. If you want the event to fire globally, you can leave this value as its default.
 
 ------------------
 
@@ -169,7 +169,7 @@ Keyboard.describe(event: KeyboardEvent) -> str
 
 *static*
 
-Description: Transforms a keyboard event into a string describing the shortcut or key. 
+Description: Transforms a keyboard event into a string describing the shortcut or key.
 
 `event`: The KeyboardEvent object to be described as a human readable string.
 
@@ -183,24 +183,30 @@ Keyboard.parseShortcut(shortcut: str) -> KeyboardEvent
 
 *static*
 
-Description: Parses a description passed in the shortcut parameter into a KeyboardEvent object that reflects the key combination. Can be used for comparisons. 
+Description: Parses a description passed in the shortcut parameter into a KeyboardEvent object that reflects the key combination. Can be used for comparisons.
 
-`shortcut`: A string description of the key or key combination. 
+`shortcut`: A string description of the key or key combination.
 
-Returns: a KeyboardEvent with an event of `'keydown'` with the various flags set for the key and modifiers. 
+Returns: a KeyboardEvent with an event of `'keydown'` with the various flags set for the key and modifiers.
 
-Note: "Manually firing these events do _not_ generate the default action associated with that event... This is important for security reasons, as it prevents scripts from simulating user actions that interact with the browser itself." - From [MDN](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent "KeyboardEvent Javascript Documentation"). 
+Note: "Manually firing these events do _not_ generate the default action associated with that event... This is important for security reasons, as it prevents scripts from simulating user actions that interact with the browser itself." - From [MDN](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent "KeyboardEvent Javascript Documentation").
 
 ------------------
 
 ```javascript
 Keyboard.compKeyEvents(
-	event1: KeyboardEvent,
-	event2: KeyboardEvent
-)
+  event1: KeyboardEvent,
+  event2: KeyboardEvent
+) -> bool
 ```
 
 *static*
+
+Description: This static function assumes that both event objects are keyboard events and compares them. If they both have the same `event.key` value and reflect the same combination of supported modifier keys pressed (Ctrl, Meta, Shift, & Alt) then the two are equivalent and the method returns `true`, otherwise it returns `false`.
+
+`event1` && `event2`: The two event objects to compare.
+
+Returns: `true` or `false`
 
 ------------------
 
@@ -210,9 +216,26 @@ Keyboard.compKeyEvents(
 constructor(
   sequence: array[str],
   eventName: str,
-  element: DOMObject
+  element: DOMObject,
+  logging: bool
 )
 ```
+
+Description: Constructs a new `Sequence` object corresponding to the array of key codes in `sequence`. When this sequence of keys is pressed, the event `eventName` is dispatched to the `element` which defaults to `document`. If `logging` is `true`, then the object will log any method calls on it to the console. it defaults however to false.
+
+`sequence`: An array of key codes which are just strings. The proper key codes are reflected in the table in the "Constants" section. Single digit numbers in the array will be automatically converted to strings in the internal representation. This allows for, as an example: 
+
+```javascript
+var seq = new Sequence([4, 1, 2, 6], "sonicCheat");
+```
+
+> **Note: Any number which is greater than a single digit will break the ability of the sequence to match up to keyboard events. This does not cause an exception of any kind, it just simply won't work for now. This may be changed in the future.**
+
+`eventName`: The name of the event to dispatch when the sequence is matched.
+
+`element`: The DOM Element to dispatch the message to for more directed messages.
+
+`logging`: Whether or not the object should log events and method calls for debugging purposes.
 
 ------------------
 
@@ -220,11 +243,15 @@ constructor(
 obj.enableLogging()
 ```
 
+Description: Enables logging on the object. When any events or method calls are made, the object will emit a message to `console.log()`.
+
 ------------------
 
 ```javascript
 obj.disableLogging()
 ```
+
+Description: Disables logging on the object causing it to be silent to the console log.
 
 ------------------
 
@@ -233,6 +260,10 @@ obj.processKeyboardEvent(
   event: KeyboardEvent
 )
 ```
+
+Description: Processes the event in `event`. If `event.key` matches the next character and none of the modifier keys are pressed, then the internal counter is incremented. Once this is determined, it then determines if the counter is equal to the length indicating that the correct combination has been fully inputted and emits the event assigned at the constructor. Otherwise, it resets the counter to 0 indicating that the combination has to be inputted from the beginning.
+
+`event`: The KeyboardEvent to check against the sequence.
 
 ------------------
 
@@ -247,17 +278,31 @@ constructor(
 )
 ```
 
+Description: Constructs a new KeyboardInput object. When the key or key combination (chord) is pressed by the user as described in `keyDesc`, the event `eventName` will be dispatched to the `element` (which by default is `document`). If `logging` is `true`, then initialization, events, and method calls will all be logged to `console.log()`, otherwise the object will be silent.
+
+`keyDesc`: This is the same kind of Key Description processed by `Keyboard.parseShortcut()`. The constructor in fact uses that static method internally to process the keyDesc into an event it can then compare to the `keydown` event to determine if the key matches.
+
+`eventName`: The event that should be emitted if the key or key combination is pressed.
+
+`element`: The element that should receive the event. By default this is `document`.
+
+`logging`: Whether or not the object should log to the console for debugging purposes; `false` by default.
+
 ------------------
 
 ```javascript
 obj.enableLogging()
 ```
 
+Description: Enables logging on the object. When any events or method calls are made, the object will emit a message to `console.log()`.
+
 ------------------
 
 ```javascript
 obj.disableLogging()
 ```
+
+Description: Disables logging on the object causing it to be silent to the console log.
 
 ------------------
 
@@ -266,6 +311,8 @@ obj.processKeyboardEvent(
   event: KeyboardEvent
 )
 ```
+
+Description: Compare the incoming KeyboardEvent `event` with the processed `keyDesc` from the constructor and if matching, emit the event `eventName` in the constructor to the `element` in the constructor.
 
 ------------------
 
