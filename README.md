@@ -314,6 +314,8 @@ obj.processKeyboardEvent(
 
 Description: Compare the incoming KeyboardEvent `event` with the processed `keyDesc` from the constructor and if matching, emit the event `eventName` in the constructor to the `element` in the constructor.
 
+`event`: The keyboard event to evaluate.
+
 ------------------
 
 ## Constants ##
