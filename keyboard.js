@@ -43,117 +43,33 @@ keyboard.redirect($('#console'));
 /// Redirect all keyboard events to this control while blocking default behavior
 */
 
-const UP 	= 'ARROWUP';
-const DOWN 	= 'ARROWDOWN';
-const LEFT 	= 'ARROWLEFT';
-const RIGHT = 'ARROWRIGHT';
-const START = 'ENTER';
-const ENTER = 'ENTER';
-const A = 'A';
-const B = 'B';
-const C = 'C';
-const D = 'D';
-const E = 'E';
-const F = 'F';
-const G = 'G';
-const H = 'H';
-const I = 'I';
-const J = 'J';
-const K = 'K';
-const L = 'L';
-const M = 'M';
-const N = 'N';
-const O = 'O';
-const P = 'P';
-const Q = 'Q';
-const R = 'R';
-const S = 'S';
-const T = 'T';
-const U = 'U';
-const V = 'V';
-const W = 'W';
-const X = 'X';
-const Y = 'Y';
-const Z = 'Z';
-const SPACE = ' ';
-const F1 = 'F1';
-const F2 = 'F2';
-const F3 = 'F3';
-const F4 = 'F4';
-const F5 = 'F5';
-const F6 = 'F6';
-const F7 = 'F7';
-const F8 = 'F8';
-const F9 = 'F9';
-const F10 = 'F10';
-const F11 = 'F11';
-const F12 = 'F12';
-const CTRL = 'CONTROL';
-const ALT = 'ALT';
-const META = 'META';
-const SHIFT = 'SHIFT';
-const SELECT = ' ';
-const ESC = 'ESCAPE';
-const TAB = 'TAB';
-const END = 'END';
-const HOME = 'HOME';
-const PGDOWN = 'PAGEDOWN';
-const PGUP = 'PAGEUP';
-const BACKSPACE = 'BACKSPACE';
-const INSERT = 'INSERT';
-const DELETE = 'DELETE';
-const MENU = 'CONTEXTMENU';
-const PLUS = '+';
-const DASH = '-';
-const TILDE = '~';
-const BACKTICK = '`';
-const BANG = '!';
-const AT = '@';
-const ASPERAND = '@';
-const CARET = '^';
-const POUND = '#';
-const HASH = '#';
-const UNDERSCORE = '_';
-const DOLLAR = '$';
-const SIGIL = '$';
-const EQUALSIGN = '=';
-const PERCENT = '%';
-const MODULO = '%';
-const PIPE = '|';
-const AND = '&';
-const AMPERSAND = '&';
-const SEMICOLON = ';';
-const ASTERISK = '*';
-const STAR = '*';
-const COLON = ':';
-const LPAREN = '(';
-const RPAREN = ')';
-const COMMA = ',';
-const LCURLYBRACE = '{';
-const RCURLYBRACE = '}';
-const QUESTION = '?';
-const LBRACKET = '[';
-const RBRACKET = ']';
-const DOUBLEQUOTE = '"';
-const LESSTHAN = '<';
-const GREATERTHAN = '>';
-const QUOTE = '\'';
-const LANGLE = '<';
-const RANGLE = '>';
-const PERIOD = '.';
-const DOT = '.';
-const ZERO = '0';
-const ONE = '1';
-const TWO = '2';
-const THREE = '3';
-const FOUR = '4';
-const FIVE = '5';
-const SIX = '6';
-const SEVEN = '7';
-const EIGHT = '8';
-const NINE = '9';
-const BACKSLASH = '\\';
-const SLASH = '/';
+const UP = 'ARROWUP'; const DOWN = 'ARROWDOWN'; const LEFT = 'ARROWLEFT'; const RIGHT = 'ARROWRIGHT';
+const START = 'ENTER'; const ENTER = 'ENTER';
+const SPACE = ' '; const SELECT = ' ';
+const A = 'A'; const B = 'B'; const C = 'C'; const D = 'D'; const E = 'E'; const F = 'F'; const G = 'G'; const H = 'H'; const I = 'I'; const J = 'J'; const K = 'K'; const L = 'L'; const M = 'M'; const N = 'N'; const O = 'O'; const P = 'P'; const Q = 'Q'; const R = 'R'; const S = 'S'; const T = 'T'; const U = 'U'; const V = 'V'; const W = 'W'; const X = 'X'; const Y = 'Y'; const Z = 'Z';
+const F1 = 'F1'; const F2 = 'F2'; const F3 = 'F3'; const F4 = 'F4'; const F5 = 'F5'; const F6 = 'F6'; const F7 = 'F7'; const F8 = 'F8'; const F9 = 'F9'; const F10 = 'F10'; const F11 = 'F11'; const F12 = 'F12';
+const CTRL = 'CONTROL'; const ALT = 'ALT'; const META = 'META'; const SHIFT = 'SHIFT'; const MENU = 'CONTEXTMENU';
+const BACKSPACE = 'BACKSPACE'; const ESC = 'ESCAPE'; const TAB = 'TAB';
+const END = 'END'; const HOME = 'HOME'; const PGDOWN = 'PAGEDOWN'; const PGUP = 'PAGEUP'; const INSERT = 'INSERT'; const DELETE = 'DELETE';
+const PLUS = '+'; const DASH = '-'; const TILDE = '~'; const BACKTICK = '`';
+const BANG = '!'; const CARET = '^'; const UNDERSCORE = '_';
+const EQUALSIGN = '='; const PIPE = '|'; const COMMA = ','; const QUESTION = '?';
+const SEMICOLON = ';'; const COLON = ':';
+const DOUBLEQUOTE = '"'; const QUOTE = '\'';
+const AT = '@'; const ASPERAND = '@';
+const POUND = '#'; const HASH = '#';
+const DOLLAR = '$'; const SIGIL = '$';
+const PERCENT = '%'; const MODULO = '%';
+const AND = '&'; const AMPERSAND = '&';
+const ASTERISK = '*'; const STAR = '*';
+const LPAREN = '('; const RPAREN = ')';
+const LCURLYBRACE = '{'; const RCURLYBRACE = '}';
+const LBRACKET = '['; const RBRACKET = ']';
+const LESSTHAN = '<'; const GREATERTHAN = '>';
+const LANGLE = '<'; const RANGLE = '>';
+const PERIOD = '.'; const DOT = '.';
+const ZERO = '0'; const ONE = '1'; const TWO = '2'; const THREE = '3'; const FOUR = '4'; const FIVE = '5'; const SIX = '6'; const SEVEN = '7'; const EIGHT = '8'; const NINE = '9';
+const BACKSLASH = '\\'; const SLASH = '/';
 
 class KeyboardInput {
 	constructor(keyDesc, eventName, element = document, logging = false) {
@@ -263,13 +179,16 @@ class Keyboard {
 			var disableRefresh = this.disableRefresh;
 
 			if (!disableRefresh && event.key.toUpperCase() == 'R' && event.ctrlKey) {
+				if (logging) { console.log('refreshing page'); }
 				location.refresh(event.shiftKey);
 				return true;
 			}
 			else if (!disableSC && (event.ctrlKey || event.altKey || event.metaKey)) {
+				if (logging) { console.log('keyboard shortcut passing through'); }
 				return true;
 			}
 			else if (!disableTAF) {
+				if (logging) { console.log('TypeAheadFind not disabled'); }
 				return true;
 			}
 			else {
@@ -281,12 +200,14 @@ class Keyboard {
 				sequences.forEach(function (item) {
 					item.processKeyboardEvent(event);
 				});
+				if (logging) { console.log('Key Events processed by Keyboard class'); }
+				return false;
 			}
 		};
 	}
 
 	registerSequence(sequence, eventName, element = document) {
-		this.events += new Sequence(sequence, eventName, element);
+		this.events += new Sequence(sequence, eventName, element, this.logging);
 	}
 
 	onSequence(sequence, predicate) {
@@ -294,7 +215,7 @@ class Keyboard {
 	}
 
 	registerKey(keyDesc, eventName, element = document) {
-
+		this.keys += new KeyboardInput(keyDesc, eventName, element, this.logging);
 	}
 
 	onKey(keyDesc, predicate) {
