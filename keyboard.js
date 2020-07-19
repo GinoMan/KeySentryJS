@@ -211,7 +211,9 @@ class Keyboard {
 	}
 
 	onSequence(sequence, predicate) {
-
+		var eventName = "internal_event_" + (this.events.length + 10).toString();
+		this.events += new Sequence(sequence, eventName);
+		document.addEventListener(eventName, predicate);
 	}
 
 	registerKey(keyDesc, eventName, element = document) {
@@ -219,7 +221,9 @@ class Keyboard {
 	}
 
 	onKey(keyDesc, predicate) {
-
+		var eventName = "internal_key_event_" + keyDesc;
+		this.keys += new KeyboardInput(keyDesc, eventName);
+		document.addEventListener(eventName, predicate);
 	}
 
 	static stringifyArray(arr) {
