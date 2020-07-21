@@ -44,7 +44,8 @@ const BACKSLASH = '\\'; const SLASH = '/';
 // TODO: List this in the documentation when the feature for it is implemented.
 const KeyType = {
 	Up: 'UP',
-	Down: 'DOWN'
+	Down: 'DOWN',
+	Held: 'HELD'
 };
 
 class Input {

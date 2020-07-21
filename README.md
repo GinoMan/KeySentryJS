@@ -445,3 +445,18 @@ Description: Compare the incoming KeyboardEvent `event` with the processed `keyD
 The constants above are used for the "sequences" to make them look more natural. Individual digits can be put in place and the `Sequence` Constructor will automatically transform them into the proper string values.
 
 ------------------
+
+# Bugs and Todos #
+
+- List the constant KeyType Enum in the documentation
+- Add Input.dispatchEvent method to the documentation
+- Consider changing the names of Sequence, KeyboardInput, and Input to more intuitive names.
+- Where appropriate, use already written static methods to compare and describe keyboard events throughout code.
+- Refactor Documentation so that methods in subclasses link to superclass instance.
+- Finish implementing KeyUp events and KeyRepeat events.
+- Add additional more useful logging where appropriate.
+- Add the ability to use more common names to keys in Keyboard.ParseShortcut for non-modifier keys.
+- Test the library on multiple desktop platforms and browsers (Currently writing for Firefox on Windows).
+- Make sure that enabling logging in the Keyboard class enables it for all sub-objects.
+
+------------------
