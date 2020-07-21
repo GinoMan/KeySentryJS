@@ -51,7 +51,7 @@ kb.onKey('Ctrl+Alt+S', function() {
 
 ## Classes ##
 
-### Input ###
+### `Input` ###
 
 #### Description ####
 
@@ -93,7 +93,7 @@ Description: When a subclass of this class is created using the `on*` methods in
 obj.enableLogging()
 ```
 
-Description: Will cause events from objects of the subclass to be logged to the console.
+Description: Enables logging on the object. When any events or method calls are made, the object will emit a message to `console.log()`.
 
 ------------------
 
@@ -101,7 +101,7 @@ Description: Will cause events from objects of the subclass to be logged to the 
 obj.disableLogging()
 ```
 
-Description: Will cause events from objects of the subclass to no longer log to the console.
+Description: Disables logging on the object causing it to be silent to the console log.
 
 ------------------
 
@@ -117,11 +117,30 @@ Description: Causes the subclass to remove the event handler it set up if the pr
 obj.processKeyboardEvent(event: Event)
 ```
 
-Default implementation forcing subclasses to redefine the method. Called when the `keydown` event is received by `window`. This prevents direct use of the `Input` class as well as preventing subclasses failing to implement this method. The event is ignored in the default implementation.
+Description: Default implementation forcing subclasses to redefine the method. Called when the `keydown` event is received by `window`. This prevents direct use of the `Input` class as well as preventing subclasses failing to implement this method. The event is ignored in the default implementation.
 
 ------------------
 
-### Keyboard ###
+```javascript
+obj.dispatchEvent(
+  eventToEval: Event,
+  element: DOMElement
+)
+```
+
+Description: Dispatches the event to the element. Adds a few pieces of state to the event that the resultant handler can check for. They are listed below:
+
+- `event.state`: Whether this was a key-down, key-up, or key-held event. The possible values are in the KeyType enum. (See "Constants" for details).
+
+- `event.repeat`: `true` if the event is being called because the key was repeated (i.e. it is being held down).
+
+`eventToEval`: The key event sent to the handler. It's needed for the method to assign the correct values to the custom event being dispatched.
+
+`element`: The element to dispatch the event to.
+
+------------------
+
+### `Keyboard` ###
 
 #### Description ####
 
@@ -292,7 +311,11 @@ Returns: `true` or `false`
 
 ------------------
 
-### Sequence ###
+### `Sequence` - Extends `Input` ###
+
+#### Description ####
+
+This object represents a sequence of keyboard inputs that must be input both sequentially and consecutively. The object keeps track of inputs when instantiated by `Keyboard`. `Keyboard` automatically passes the keyboard event to the `processEventHandler` method which determines if the input is the correct input for the sequence and resets the sequence if not.
 
 ```javascript
 constructor(
@@ -322,22 +345,6 @@ var seq = new Sequence([4, 1, 2, 6], "sonicCheat");
 ------------------
 
 ```javascript
-obj.enableLogging()
-```
-
-Description: Enables logging on the object. When any events or method calls are made, the object will emit a message to `console.log()`.
-
-------------------
-
-```javascript
-obj.disableLogging()
-```
-
-Description: Disables logging on the object causing it to be silent to the console log.
-
-------------------
-
-```javascript
 obj.processKeyboardEvent(
   event: KeyboardEvent
 )
@@ -349,7 +356,7 @@ Description: Processes the event in `event`. If `event.key` matches the next cha
 
 ------------------
 
-### KeyboardInput ###
+### `KeyboardInput` - Extends `Input` ###
 
 ```javascript
 constructor(
@@ -369,22 +376,6 @@ Description: Constructs a new KeyboardInput object. When the key or key combinat
 `element`: The element that should receive the event. By default this is `document`.
 
 `logging`: Whether or not the object should log to the console for debugging purposes; `false` by default.
-
-------------------
-
-```javascript
-obj.enableLogging()
-```
-
-Description: Enables logging on the object. When any events or method calls are made, the object will emit a message to `console.log()`.
-
-------------------
-
-```javascript
-obj.disableLogging()
-```
-
-Description: Disables logging on the object causing it to be silent to the console log.
 
 ------------------
 
@@ -446,17 +437,26 @@ The constants above are used for the "sequences" to make them look more natural.
 
 ------------------
 
+### `KeyType`: enum ###
+
+#### Values: ####
+
+- `KeyType.Up`: Key was released
+- `KeyType.Down`: Key was pressed
+- `KeyType.Held`: Key is being held down
+
+------------------
+
 # Bugs and Todos #
 
-- List the constant KeyType Enum in the documentation
-- Add Input.dispatchEvent method to the documentation
 - Consider changing the names of Sequence, KeyboardInput, and Input to more intuitive names.
 - Where appropriate, use already written static methods to compare and describe keyboard events throughout code.
-- Refactor Documentation so that methods in subclasses link to superclass instance.
 - Finish implementing KeyUp events and KeyRepeat events.
 - Add additional more useful logging where appropriate.
 - Add the ability to use more common names to keys in Keyboard.ParseShortcut for non-modifier keys.
 - Test the library on multiple desktop platforms and browsers (Currently writing for Firefox on Windows).
 - Make sure that enabling logging in the Keyboard class enables it for all sub-objects.
+- Add copious code examples.
+- Add text to headings to indicate what methods are meant for internal use but documented for completeness.
 
 ------------------

@@ -99,7 +99,6 @@ class Input {
 		}
 	}
 
-	// TODO: Add this method to the documentation.
 	dispatchEvent(eventToEval, element) {
 		if (eventToEval.type == 'keydown') {
 			this.event.repeat = eventToEval.repeat;
@@ -141,8 +140,8 @@ class KeyboardInput extends Input {
 	processKeyboardEvent(event) {
 		if (this.logging) { console.log('Processing Keyboard Event for ' + this.keyDesc + '.'); }
 		if (Keyboard.compKeyEvents(event, this)) {
-			this.element.forEach(function (item) { 
-				this.dispatchEvent(event, item); 
+			this.element.forEach(function (item) {
+				this.dispatchEvent(event, item);
 			});
 		}
 	}
