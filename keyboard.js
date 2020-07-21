@@ -2,42 +2,12 @@
 Keyboard Input System Override
 
 Features: 
-- Automatically emits the Konami Code as an event
-- Create Custom events for custom keyboard shortcuts or key sequences
-- Turn keyboard events into descriptions that are human readable
-- Block all/some/no inputs from keyboard to the browser
 - [Future] Process joypad inputs as well?
 - Redirect all keyboard actions to an element
 */
 
 /*
 Interface ideas!
-
-var keyboard = new Keyboard({ disableTAF: true, disableSC: true, disableRefresh: false })
-
-$(.logo).first().on('konami', function() {
-	$_this.replace('<image class="logo" src="/easteregg.jpg" />');
-});
-
-keyboard.registerSequence([I, D, K, F, A], 'idkfa');
-/// now, when the keyboard sequence IDKFA is inputted, the whole page gets the "idkfa" event.
-
-keyboard.onSequence([I, D, K, F, A], function() {
-	/// do stuff
-});
-
-keyboard.registerKey('Ctrl+Shift+I', 'csi');
-/// when someone presses ctrl+shift+i, the whole document gets the csi event.
-
-keyboard.onKey('Ctrl+Alt+Backspace', function () {
-	location.reload(true);
-})
-/// Does a hard refresh on the page without caching upon the ctrl+alt+backspace key.
-
-document.onkeydown = function (e) {
-	var keyDesc = Keyboard.describe(e);
-	console.log(keyDesc + ' key pressed!');
-}
 
 keyboard.redirect($('#console'));
 /// Redirect all keyboard events to this control while blocking default behavior
@@ -71,90 +41,140 @@ const PERIOD = '.'; const DOT = '.';
 const ZERO = '0'; const ONE = '1'; const TWO = '2'; const THREE = '3'; const FOUR = '4'; const FIVE = '5'; const SIX = '6'; const SEVEN = '7'; const EIGHT = '8'; const NINE = '9';
 const BACKSLASH = '\\'; const SLASH = '/';
 
-class KeyboardInput {
+// TODO: List this in the documentation when the feature for it is implemented.
+const KeyType = {
+	Up: 'UP',
+	Down: 'DOWN'
+};
+
+class Input {
+	constructor(eventName, element = document, logging = false) {
+		this.logging = logging;
+		if (element.jquery) {
+			if (this.logging) { console.log('JQuery element passed'); }
+			var el = element.get();
+			if (typeof(el) != typeof([])) {
+				el = [ el ];
+			}
+			 this.element = el; // get dom element if a jquery element is passed.
+		}
+		else if (typeof (element) == typeof ([])) {
+			if (this.logging) { console.log('Array of elements passed'); }
+			 this.element = element;
+		}
+		else {
+			if (this.logging) { console.log('Single Element passed'); }
+			 this.element = [ element ];
+		}
+		this.eventName = eventName;
+		if (this.logging) { console.log('Event Named: ' + eventName); }
+		this.event = new Event(this.eventName);
+		if (this.logging) { console.log('Input Constructor Finished.'); }
+	}
+
+	assignPredicate(predicate) {
+		this.predicate = predicate;
+		if (this.logging) { console.log('Predicate assigned.'); }
+	}
+
+	enableLogging() {
+		this.logging = true;
+		if (this.logging) { console.log('Enabling logging'); }
+	}
+
+	disableLogging() {
+		if (this.logging) { console.log('Disabling logging'); }
+		this.logging = false;
+	}
+
+	deregister() {
+		if (this.logging) { console.log('Deregister called'); }
+		if ('predicate' in this) {
+			if (this.logging) { console.log('Predicate found.'); }
+			this.element.forEach(function (item) {
+				if (this.logging) { console.log('removing listeners'); }
+				item.removeEventListener(this.eventName, this.predicate);
+			});
+		}
+	}
+
+	// TODO: Add this method to the documentation.
+	dispatchEvent(eventToEval, element) {
+		if (eventToEval.type == 'keydown') {
+			this.event.repeat = eventToEval.repeat;
+			this.event.state = KeyType.Down;
+			element.dispatchEvent(this.event);
+		}
+		else if (eventToEval.type == 'keyup') {
+			this.event.state = KeyType.Up;
+			element.dispatchEvent(this.event);
+		}
+	}
+
+	processKeyboardEvent(event) {
+		throw "Not Implemented!";
+	}
+}
+
+// TODO: Consider changing the names of Sequence, KeyboardInput, and their parent: Input.
+// TODO: Use Keyboard's static methods to make sure that key descriptions are consistent in deregister comparisons
+// TODO: Refactor documentation so that methods in subclasses refer to the superclass.
+// TODO: Add a feature to track whether the event is a keydown or keyup event.
+// TODO: Add the ability to determine if a key is being held
+// TODO: Add logging to all methods and classes.
+class KeyboardInput extends Input {
 	constructor(keyDesc, eventName, element = document, logging = false) {
-		this.keyboardEvent = Keyboard.parseShortcut(keyDesc);
+		super(eventName, element, logging);
+		
+		this.keyDesc = keyDesc;
+		this.keyboardEvent = Keyboard.parseShortcut(this.keyDesc);
 		this.key = this.keyboardEvent.key;
 		this.shiftKey = this.keyboardEvent.shiftKey;
 		this.ctrlKey = this.keyboardEvent.ctrlKey;
 		this.altKey = this.keyboardEvent.ctrlKey;
 		this.metaKey = this.keyboardEvent.metaKey;
-		this.eventName = eventName;
-		this.logging = logging;
-
-		if (element.jquery) {
-			this.element = element.get(); // get dom element if a jquery element is passed.
-		}
-		else if (typeof(element) == typeof([])) {
-			this.element = element;
-		}
-		else {
-			this.element = [ element ];
-		}
-	}
-
-	enableLogging() {
-		this.logging = true;
-	}
-
-	disableLogging() {
-		this.logging = false;
+		
+		if (this.logging) { console.log('Keyboard Shortcut Created: ' + keyDesc); }
 	}
 
 	processKeyboardEvent(event) {
-		if (event.key == this.key &&
-			event.shiftKey == this.shiftKey &&
-			event.ctrlKey == this.ctrlKey &&
-			event.altKey == this.altKey &&
-			event.metaKey == this.metaKey)
-		{
-			this.element.dispatchEvent(new Event(this.eventName));
+		if (this.logging) { console.log('Processing Keyboard Event for ' + this.keyDesc + '.'); }
+		if (Keyboard.compKeyEvents(event, this)) {
+			this.element.forEach(function (item) { 
+				this.dispatchEvent(event, item); 
+			});
 		}
 	}
 }
 
-class Sequence {
+class Sequence extends Input {
 	constructor(sequence, eventName, element = document, logging = false) {
-		if (element.jquery) {
-			this.element = element.get(); // get dom element if a jquery element is passed.
-		}
-		else if (typeof(element) == typeof([])) {
-			this.element = element;
-		}
-		else {
-			this.element = [ element ];
-		}
+		super(eventName, element, logging);
 
-		this.sequence = Keyboard.stringifyArray(sequence);
-		this.eventName = eventName;
+		this.sequence = Keyboard.stringifyArray(sequence); // renders numbers safe
 		this.index = 0;
-		this.event = new Event(eventName);
-		this.isLogging = logging;
+
 		if (this.isLogging) {
 			console.log('Sequence ' + this.sequence.toString() + ' initialized for event ' + this.eventName + '.');
 		}
 	}
 
-	enableLogging() {
-		this.isLogging = true;
-	}
-
-	disableLogging() {
-		this.isLogging = false;
-	}
-
 	processKeyboardEvent(event) {
 		if (this.sequence[this.index] == event.key.toUpperCase()) {
+			if (this.logging) { console.log('Sequence Success: ' + event.key.toUpperCase() + '.'); }
 			this.index++;
 		}
 		else {
+			if (this.logging) { console.log('Sequence Reset. ' + event.key.toUpperCase() + ' is not ' + this.sequence[this.index] + '.'); }
 			this.index = 0; // reset if the sequence isn't followed.
 		}
 
 		if (this.index >= this.sequence.length) {
+			if (this.logging) { console.log('Triggering Event; sequence complete! ' + this.sequence); }
 			this.element.forEach(function (item) {
-				item.dispatchEvent(this.event);
+				this.dispatchEvent(event, item);
 			});
+			this.index = 0;
 		}
 	}
 }
@@ -162,7 +182,6 @@ class Sequence {
 class Keyboard {
 	constructor(options = {}) {
 		this.events = [];
-		this.sequences = [];
 		this.logging = ("logging" in options ? options.logging : false);
 		this.disableTAF = ("disableTAF" in options ? options.disableTAF : true);
 		this.disableSC = ("disableSC" in options ? options.disableSC : false);
@@ -170,9 +189,7 @@ class Keyboard {
 
 		// override the keyboard handler with our custom handler
 		window.onkeydown = event => {
-			// Custom handler here that responds to changes to the object.
 			var events = this.events;
-			var sequences = this.sequences;
 			var logging = this.logging;
 			var disableTAF = this.disableTAF;
 			var disableSC = this.disableSC;
@@ -196,33 +213,92 @@ class Keyboard {
 				events.forEach(function (item) {
 					item.processKeyboardEvent(event);
 				});
-				// send the key to all sequences
-				sequences.forEach(function (item) {
-					item.processKeyboardEvent(event);
-				});
 				if (logging) { console.log('Key Events processed by Keyboard class'); }
 				return false;
 			}
 		};
+
+		window.onkeyup = event => {
+			var events = this.events;
+			var logging = this.logging;
+			var disableTAF = this.disableTAF;
+			var disableSC = this.disableSC;
+			var disableRefresh = this.disableRefresh;
+
+			if (logging) { console.log('Key Up event'); }
+			events.forEach(function (item) {
+				item.processKeyboardEvent(event);
+			});
+		};
+	}
+
+	enableLogging() {
+		if (!this.logging) {
+			this.events.forEach(function (item, index, arr) {
+				arr[index].enableLogging();
+			});
+		}
+		this.logging = true;
+		if (this.logging) { console.log('Enabling logging globally'); }
+	}
+
+	disableLogging() {
+		if (this.logging) { 
+			console.log('Disabling logging globally'); 
+			this.events.forEach(function (item, index, arr){
+				arr[index].disableLogging();
+			});
+		}
+		this.logging = false;
 	}
 
 	registerSequence(sequence, eventName, element = document) {
+		if (this.logging) { console.log('Registering Sequence: ' + sequence + '; for event ' + eventName); }
 		this.events += new Sequence(sequence, eventName, element, this.logging);
 	}
 
 	onSequence(sequence, predicate) {
-		var eventName = "internal_event_" + (this.events.length + 10).toString();
-		this.events += new Sequence(sequence, eventName);
+		var eventName = "internal_event_" + Math.round(Date.now() + (Math.random() * 123123123123123)).toString();
+		if (this.logging) { console.log('Event named: ' + eventName); }
+		var seq = new Sequence(sequence, eventName);
+		seq.assignPredicate(predicate);
+		this.events += seq;
+		if (this.logging) { console.log('Adding Event Listener to Document'); }
 		document.addEventListener(eventName, predicate);
 	}
 
+	deRegisterSequence(sequence) {
+		this.events.forEach(function (item, index, arr) {
+			if (typeof(item) == typeof(Sequence) && sequence == item.sequence) {
+				if (this.logging) { console.log('Deregistering Sequence ' + item.sequence); }
+				item.deregister();
+				arr.splice(index, 1);
+			}
+		});
+	}
+
+	deRegisterKey(keyDesc) {
+		this.events.forEach(function (item, index, arr) {
+			if (typeof (item) == typeof (KeyboardInput) && keyDesc == item.keyDesc) {
+				if (this.logging) { console.log('Deregistering Key ' + item.keyDesc); }
+				item.deregister();
+				arr.splice(index, 1);
+			}
+		});
+	}
+
 	registerKey(keyDesc, eventName, element = document) {
-		this.keys += new KeyboardInput(keyDesc, eventName, element, this.logging);
+		if (this.logging) { console.log('Registering Key: ' + keyDesc + '; for event ' + eventName); }
+		this.events += new KeyboardInput(keyDesc, eventName, element, this.logging);
 	}
 
 	onKey(keyDesc, predicate) {
-		var eventName = "internal_key_event_" + keyDesc;
-		this.keys += new KeyboardInput(keyDesc, eventName);
+		var eventName = "internal_key_event_" + Math.round(Date.now() + (Math.random() * 123123123123123)).toString();
+		if (this.logging) { console.log('Event named: ' + eventName); }
+		var input = new KeyboardInput(keyDesc, eventName);
+		input.assignPredicate(predicate);
+		this.events += input;
+		if (this.logging) { console.log('Adding Event Listener To Document'); }
 		document.addEventListener(eventName, predicate);
 	}
 
@@ -235,6 +311,7 @@ class Keyboard {
 	static describe(event) {
 		var keyCode = event.key.toUpperCase();
 		if (['CONTROL', 'ALT', 'META', 'SHIFT'].includes(keyCode)) {
+			if (this.logging) { console.log('Modifier Key: ' + keyCode); }
 			return keyCode;
 		}
 		var str = (event.ctrlKey ? 'Ctrl+' : '') +
@@ -242,6 +319,7 @@ class Keyboard {
 			(event.shiftKey ? 'Shift+' : '') +
 			(event.metaKey ? 'Meta+' : '') +
 			(event.key == ' ' ? 'Space' : event.key.toUpperCase());
+		if (this.logging) { console.log('Key Combo: ' + str); }
 		return str;
 	}
 
@@ -292,6 +370,7 @@ class Keyboard {
 				dict.metaKey = true;
 			}
 			else {
+				// TODO: use similar array membership method as above to parse spaces, tabs, directions, etc.
 				dict.key = item.toUpperCase();
 			}
 		});
@@ -301,12 +380,14 @@ class Keyboard {
 	}
 
 	static compKeyEvents(event1, event2) {
-		return (
+		var isEqual = (
 			event1.key == event2.key &&
 			event1.ctrlKey == event2.ctrlKey &&
 			event1.shiftKey == event2.shiftKey &&
 			event1.altKey == event2.altKey &&
 			event1.metaKey == event2.metaKey
 		);
+		if (this.logging) { console.log('Events ' + Keyboard.describe(event1) + ' & ' + Keyboard.describe(event2) + ' are ' + (isEqual ? 'equal' : 'not equal') + '.'); }
+		return isEqual;
 	}
 }

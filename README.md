@@ -51,7 +51,83 @@ kb.onKey('Ctrl+Alt+S', function() {
 
 ## Classes ##
 
+### Input ###
+
+#### Description ####
+
+This is the base class for both the `KeyboardInput` and `Sequence` classes and contains the shared code between them. The methods that are part of an `'input'` is described below.
+
+------------------
+
+```javascript
+constructor(
+  eventName: str,
+  element: DOMElement,
+  logging: bool
+)
+```
+
+Shared constructor called by subclasses to initialize the shared functionality. The event object is created, the event name is saved, the element is normalized to an array of DOMElements and saved, and the logging is turned on or off depending on the last parameter.
+
+Options:
+
+`eventName`: The name of the event that the subclass will fire.
+
+`element`: The element that will receive the event (defaults to document).
+
+`logging`: Whether the subclass should log to `console.log()`.
+
+------------------
+
+```javascript
+obj.assignPredicate(predicate: func(Event) -> bool)
+```
+
+Description: When a subclass of this class is created using the `on*` methods in `Keyboard`, the function that was created to set up the event handler needs to be specified to the method that removes it from the `element`. This method is called in those methods to save the `predicate` into the object so that it can be used later for removal if requested.
+
+`predicate`: An event handler function that returns a bool and receives a DOM `Event` object which will handle the event.
+
+------------------
+
+```javascript
+obj.enableLogging()
+```
+
+Description: Will cause events from objects of the subclass to be logged to the console.
+
+------------------
+
+```javascript
+obj.disableLogging()
+```
+
+Description: Will cause events from objects of the subclass to no longer log to the console.
+
+------------------
+
+```javascript
+obj.deregister()
+```
+
+Description: Causes the subclass to remove the event handler it set up if the predicate is defined. Otherwise it does nothing. This method is mainly for the use of the `Keyboard` class's deregister for events registered with the `Keybord` class's `on*` methods.
+
+------------------
+
+```javascript
+obj.processKeyboardEvent(event: Event)
+```
+
+Default implementation forcing subclasses to redefine the method. Called when the `keydown` event is received by `window`. This prevents direct use of the `Input` class as well as preventing subclasses failing to implement this method. The event is ignored in the default implementation.
+
+------------------
+
 ### Keyboard ###
+
+#### Description ####
+
+The Keyboard class is the interface to the entire library. It allows you to set up sequences, create ad hoc event handlers, remove event handlers and sequences, set up shortcuts, and remove them. Each method is described below. See the code for more details if a question is not answered by the documentation (and consider dropping me a note so I can add that detail to the documentation).
+
+------------------
 
 ```javascript
 constructor( options: dict )
@@ -160,6 +236,12 @@ Keyboard.stringifyArray(arr: array[any])
 ```
 
 *static*
+
+Description: Replaces all items in array `arr` with the results of their `toString()` method.
+
+`arr`: The array to modify.
+
+> Note: This method does not return the array, it modifies it in place.
 
 ------------------
 
